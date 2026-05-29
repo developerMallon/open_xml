@@ -1,0 +1,25 @@
+# Banco de Dados
+*.db
+nfe_database.db
+
+# Arquivos XML / Pasta de XMLs
+xml/
+*.xml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.*.local
+
+# IDEs e Editores
+.vscode/
+.idea/

@@ -180,7 +180,7 @@ def parse_nfe(xml_path):
             if veic is not None:
                 veic_data = {
                     "tpOp": get_text(veic, "tpOp"),
-                    "chassi": get_text(veic, "chassi"),
+                    "importar_pasta_xml": get_text(veic, "chassi"),
                     "cCor": get_text(veic, "cCor"),
                     "xCor": get_text(veic, "xCor"),
                     "pot": get_text(veic, "pot"),
@@ -274,9 +274,9 @@ def parse_nfe(xml_path):
 
 def importar_pasta_xml(pasta_base="xml", callback_progresso=None):
     """
-    Scans the 'xml' folder for .xml files (ignoring sub-folders like 'processados'),
+    Scans the 'xml' folder for .xml files (ignoring sub-folders like 'integrados'),
     parses each one, saves vehicles to the SQLite DB and moves every processed
-    file to xml/processados regardless of outcome.
+    file to xml/integrados regardless of outcome.
 
     callback_progresso(msg: str) is called for each step if provided.
 
@@ -286,8 +286,10 @@ def importar_pasta_xml(pasta_base="xml", callback_progresso=None):
     import shutil
     from db_nfe import salvar_nfe
 
-    pasta_processados = os.path.join(pasta_base, "processados")
-    os.makedirs(pasta_processados, exist_ok=True)
+    pasta_integrados = os.path.join(pasta_base, "integrados")
+    os.makedirs(pasta_integrados, exist_ok=True)
+    pasta_rejeitados = os.path.join(pasta_base, "rejeitados")
+    os.makedirs(pasta_rejeitados, exist_ok=True)
 
     def log(msg):
         if callback_progresso:
@@ -341,17 +343,17 @@ def importar_pasta_xml(pasta_base="xml", callback_progresso=None):
             detalhes.append(f"❌ {nome}: Erro - {str(e)}")
             log(f"   ❌ Erro: {e}")
 
-        # Move file to processados regardless of outcome
-        destino = os.path.join(pasta_processados, nome)
-        # If file with same name already exists in processados, append a counter
+        # Move file to integrados regardless of outcome
+        destino_integrados = os.path.join(pasta_integrados, nome)
+        # If file with same name already exists in integrados, append a counter
         base, ext = os.path.splitext(nome)
         counter = 1
-        while os.path.exists(destino):
-            destino = os.path.join(pasta_processados, f"{base}_{counter}{ext}")
+        while os.path.exists(destino_integrados):
+            destino_integrados = os.path.join(pasta_integrados, f"{base}_{counter}{ext}")
             counter += 1
         try:
-            shutil.move(caminho, destino)
-            log(f"   📁 Movido para: processados/{os.path.basename(destino)}")
+            shutil.move(caminho, destino_integrados)
+            log(f"   📁 Movido para: integrados/{os.path.basename(destino_integrados)}")
         except Exception as move_err:
             log(f"   ⚠️  Não foi possível mover o arquivo: {move_err}")
 
